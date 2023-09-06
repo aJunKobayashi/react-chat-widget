@@ -4,6 +4,7 @@ import cn from 'classnames';
 import Badge from './components/Badge';
 import { GlobalState } from '../../../../store/types';
 import { setBadgeCount } from '../../../../store/actions';
+import React from 'react';
 
 import './style.scss';
 

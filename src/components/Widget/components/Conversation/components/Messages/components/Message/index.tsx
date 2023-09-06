@@ -4,6 +4,7 @@ import markdownItSup from 'markdown-it-sup';
 import markdownItSanitizer from 'markdown-it-sanitizer';
 import markdownItClass from '@toycode/markdown-it-class';
 import markdownItLinkAttributes from 'markdown-it-link-attributes';
+import React from 'react';
 
 import { MessageTypes } from 'src/store/types';
 

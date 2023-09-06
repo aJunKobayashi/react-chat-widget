@@ -1,5 +1,5 @@
 const close = require('../../../../../../../assets/clear-button.svg') as string;
-
+import React from 'react';
 import './style.scss';
 
 type Props = {

@@ -6,7 +6,7 @@ import { scrollToBottom } from '../../../../../../utils/messages';
 import { MessageTypes, Link, CustomCompMessage, GlobalState } from '../../../../../../store/types';
 import { setBadgeCount, markAllMessagesRead } from '../../../../../../store/actions';
 import { MESSAGE_SENDER } from '../../../../../../constants';
-
+import React from 'react';
 import Loader from './components/Loader';
 import './styles.scss';
 

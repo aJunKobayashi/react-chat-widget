@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 
 import { GlobalState, QuickButtonTypes } from 'src/store/types';
 import { AnyFunction } from 'src/utils/types';
-
+import React from 'react';
 import './style.scss';
 
 type Props = {

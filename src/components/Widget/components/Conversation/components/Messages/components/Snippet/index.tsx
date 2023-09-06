@@ -1,5 +1,5 @@
 import format from 'date-fns/format';
-
+import React from 'react';
 import { Link } from 'src/store/types';
 
 import './styles.scss';

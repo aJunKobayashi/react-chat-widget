@@ -1,4 +1,5 @@
 import { QuickButtonTypes } from 'src/store/types';
+import React from 'react';
 import './styles.scss';
 
 type Props = {

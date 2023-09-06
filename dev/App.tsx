@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import React from 'react';
 
 import { Widget, addResponseMessage, setQuickButtons, toggleMsgLoader, addLinkSnippet } from '../index';
 import { addUserMessage } from '..';

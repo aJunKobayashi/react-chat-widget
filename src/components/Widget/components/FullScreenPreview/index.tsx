@@ -6,6 +6,7 @@ import usePortal from './usePortal';
 import './styles.scss';
 import { GlobalState } from '../../../../store/types';
 import { closeFullscreenPreview } from '../../../../store/actions';
+import React from 'react';
 
 const close = require('../../../../../assets/close.svg') as string;
 const plus = require('../../../../../assets/plus.svg') as string;

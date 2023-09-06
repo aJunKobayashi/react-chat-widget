@@ -14,9 +14,10 @@ type Props = {
   showTimeStamp: boolean,
   profileAvatar?: string;
   profileClientAvatar?: string;
+  scrollBottom: boolean;
 }
 
-function Messages({ profileAvatar, profileClientAvatar, showTimeStamp }: Props) {
+function Messages({ profileAvatar, profileClientAvatar, showTimeStamp, scrollBottom}: Props) {
   const dispatch = useDispatch();
   const { messages, typing, showChat, badgeCount } = useSelector((state: GlobalState) => ({
     messages: state.messages.messages,
@@ -28,7 +29,9 @@ function Messages({ profileAvatar, profileClientAvatar, showTimeStamp }: Props) 
   const messageRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     // @ts-ignore
-    scrollToBottom(messageRef.current);
+    if (scrollBottom) {
+      scrollToBottom(messageRef.current);
+    }
     if (showChat && badgeCount) dispatch(markAllMessagesRead());
     else dispatch(setBadgeCount(messages.filter((message) => message.unread).length));
   }, [messages, badgeCount, showChat]);

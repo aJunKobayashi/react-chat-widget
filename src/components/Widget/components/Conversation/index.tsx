@@ -36,6 +36,7 @@ type Props = {
   showTimeStamp: boolean;
   resizable?: boolean;
   emojis?: boolean;
+  scrollBottom: boolean;
 };
 
 function Conversation({
@@ -56,7 +57,8 @@ function Conversation({
   sendButtonAlt,
   showTimeStamp,
   resizable,
-  emojis
+  emojis,
+  scrollBottom
 }: Props) {
   const [containerDiv, setContainerDiv] = useState<HTMLElement | null>();
   let startX, startWidth;
@@ -120,6 +122,7 @@ function Conversation({
         profileAvatar={profileAvatar}
         profileClientAvatar={profileClientAvatar}
         showTimeStamp={showTimeStamp}
+        scrollBottom={scrollBottom}
       />
       <QuickButtons onQuickButtonClicked={onQuickButtonClicked} />
       {/* {emojis && pickerStatus && (<Picker 

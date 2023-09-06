@@ -117,6 +117,7 @@ function App() {
         // fullScreenMode={true}
         handleToggle={handleToggle}
         showCloseButton={false}
+        scrollBottom={false}
       />
     </div>
   );

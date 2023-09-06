@@ -40,6 +40,7 @@ type Props = {
   showBadge?: boolean;
   resizable?: boolean;
   emojis?: boolean
+  scrollBottom: boolean;
 }
 
 function WidgetLayout({
@@ -68,7 +69,8 @@ function WidgetLayout({
   zoomStep,
   showBadge,
   resizable,
-  emojis
+  emojis,
+  scrollBottom
 }: Props) {
   const dispatch = useDispatch();
   const { dissableInput, showChat, visible } = useSelector((state: GlobalState) => ({
@@ -148,6 +150,7 @@ function WidgetLayout({
           showTimeStamp={showTimeStamp}
           resizable={resizable}
           emojis={emojis}
+          scrollBottom={scrollBottom}
         />
       }
       {customLauncher ?

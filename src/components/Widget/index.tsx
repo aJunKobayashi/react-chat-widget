@@ -35,6 +35,7 @@ type Props = {
   showBadge?: boolean;
   resizable?: boolean;
   emojis?: boolean;
+  scrollBottom: boolean;
 }
 
 function Widget({
@@ -64,7 +65,8 @@ function Widget({
   handleSubmit,
   showBadge,
   resizable,
-  emojis
+  emojis,
+  scrollBottom
 }: Props) {
   const dispatch = useDispatch();
 
@@ -116,6 +118,7 @@ function Widget({
       showBadge={showBadge}
       resizable={resizable}
       emojis={emojis}
+      scrollBottom={scrollBottom}
     />
   );
 }

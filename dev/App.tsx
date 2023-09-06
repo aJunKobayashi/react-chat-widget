@@ -1,54 +1,125 @@
-import { Component } from 'react';
+import { Component, useEffect } from 'react';
 import React from 'react';
 
-import { Widget, addResponseMessage, setQuickButtons, toggleMsgLoader, addLinkSnippet } from '../index';
+import { Widget, addResponseMessage, deleteMessages, setQuickButtons, toggleMsgLoader, addLinkSnippet } from '../index';
 import { addUserMessage } from '..';
 
-export default class App extends Component {
-  componentDidMount() {
-    addResponseMessage('Welcome to this awesome chat!');
-    addLinkSnippet({ link: 'https://google.com', title: 'Google' });
-    addResponseMessage('![](https://raw.githubusercontent.com/Wolox/press-kit/master/logos/logo_banner.png)');
-    addResponseMessage('![vertical](https://d2sofvawe08yqg.cloudfront.net/reintroducing-react/hero2x?1556470143)');
-  }
 
-  handleNewUserMessage = (newMessage: any) => {
-    toggleMsgLoader();
-    setTimeout(() => {
-      toggleMsgLoader();
-      if (newMessage === 'fruits') {
-        setQuickButtons([ { label: 'Apple', value: 'apple' }, { label: 'Orange', value: 'orange' }, { label: 'Pear', value: 'pear' }, { label: 'Banana', value: 'banana' } ]);
-      } else {
-        addResponseMessage(newMessage);
-      }
-    }, 2000);
-  }
 
-  handleQuickButtonClicked = (e: any) => {
-    addResponseMessage('Selected ' + e);
-    setQuickButtons([]);
-  }
 
-  handleSubmit = (msgText: string) => {
-    if(msgText.length < 80) {
-      addUserMessage("Uh oh, please write a bit more.");
-      return false;
-    }
-    return true;
-  }
 
-  render() {
-    return (
-      <Widget
-        title="Bienvenido"
-        subtitle="Asistente virtual"
-        senderPlaceHolder="Escribe aquí ..."
-        handleNewUserMessage={this.handleNewUserMessage}
-        handleQuickButtonClicked={this.handleQuickButtonClicked}
-        imagePreview
-        handleSubmit={this.handleSubmit}
-        emojis
-      />
-    );
+(window as any).requestAnimationFrame = ()=>{};
+let gMessageIds: string[] = [];
+let gTimer: NodeJS.Timeout | null = null;
+const gInterval = 5000; // ms
+let gStartUnixMs = 0;
+const gTimeout = 300_000; // ms
+let gResponseId = 0;
+
+
+ const scrollWidget = (height: number) => {
+  const messagesDiv = document.getElementById('messages'); // div要素を取得
+  if (messagesDiv === null) {
+    return;
+  }
+  messagesDiv.scrollTop += height; 
+ }
+
+const clearTimer = () => {
+  if (gTimer !== null) {
+    clearTimeout(gTimer);
+    gTimer = null;
   }
 }
+
+
+
+
+
+
+
+
+async function postQuestion(question: string, resId: number) {
+  const url = `http://localhost:5001/api/v1/question`;  // <YOUR_SERVER_ADDRESS>を適切なアドレスに置き換えてください。
+  let answer = "";
+  const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ question: question })
+  });
+
+  if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to post question');
+  }
+
+  const reader = response.body!.getReader();
+  const decoder = new TextDecoder();
+
+  let init = true;
+  while (true) {
+      const { value, done } = await reader.read();
+      if (done) {
+          break;
+      }
+      answer += decoder.decode(value);
+      if (init) {
+        init = false;
+      }
+      deleteMessages(1, `${resId}`);
+      addResponseMessage(answer, `${resId}`);
+      // console.log(decoder.decode(value));
+  }
+
+  return;
+}
+
+
+function App() {
+  useEffect(() => {
+    addResponseMessage("test");
+    clearTimer();
+  }, []);
+
+  const handleNewUserMessage = async (newMessage: string) => {
+      handleNewUserMessageWithStream(newMessage);
+  }
+
+  const handleNewUserMessageWithStream = async (newMessage: string) => {
+    const time = new Date().getTime();
+    console.log(`time: ${time}`)
+    console.log(`New message incoming! ${newMessage}`);
+    const resId = gResponseId;
+    gResponseId += 1;
+
+    try {
+      await postQuestion(newMessage, resId);
+    } catch (error) {
+      addResponseMessage(`エラーが発生しました。接続元IPアドレスが正しいか確認してください。`)
+      console.log(error)
+    }
+  };
+
+  
+
+  const handleToggle = (args: any) => {
+    console.log(`handleToggle: ${JSON.stringify(args, null, " ")}`)
+  }
+
+  return (
+    <div className="App">
+      <Widget
+        handleNewUserMessage={handleNewUserMessage}
+        title={"test"}
+        subtitle={"test"}
+        // fullScreenMode={true}
+        handleToggle={handleToggle}
+        showCloseButton={false}
+      />
+    </div>
+  );
+}
+
+export default App;

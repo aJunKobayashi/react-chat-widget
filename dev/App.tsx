@@ -6,7 +6,9 @@ import { addUserMessage } from '..';
 
 
 
-
+let isProgrammaticScroll = true;
+let gIsAutoScrolling = true;
+let glastScrollTop = 0;
 
 (window as any).requestAnimationFrame = ()=>{};
 let gMessageIds: string[] = [];
@@ -22,7 +24,26 @@ let gResponseId = 0;
   if (messagesDiv === null) {
     return;
   }
+  
   messagesDiv.scrollTop += height; 
+ }
+
+ const scrollHandler = () => {
+  const messagesDiv = document.getElementById('messages'); // div要素を取得
+  if (messagesDiv === null) {
+    return;
+  }
+  messagesDiv.onscroll = (ev: any) => {
+    if (messagesDiv.scrollTop < glastScrollTop) {
+      gIsAutoScrolling = false;
+    }
+    glastScrollTop = messagesDiv.scrollTop;
+    if (messagesDiv.scrollTop + messagesDiv.clientHeight >= messagesDiv.scrollHeight) {
+      console.log('Scrolled to the bottom!');
+      gIsAutoScrolling = true;
+    }
+    console.log(`scrollHandler: ${messagesDiv?.scrollTop} programmatic: ${isProgrammaticScroll}`);
+  }
  }
 
 const clearTimer = () => {
@@ -54,7 +75,7 @@ async function postQuestion(question: string, resId: number) {
       const errorData = await response.json();
       throw new Error(errorData.error || 'Failed to post question');
   }
-
+  gIsAutoScrolling = true;
   const reader = response.body!.getReader();
   const decoder = new TextDecoder();
 
@@ -67,6 +88,9 @@ async function postQuestion(question: string, resId: number) {
       answer += decoder.decode(value);
       if (init) {
         init = false;
+      }
+      if (gIsAutoScrolling) {
+        setTimeout(() => {scrollWidget(10000)}, 100);
       }
       deleteMessages(1, `${resId}`);
       addResponseMessage(answer, `${resId}`);
@@ -88,6 +112,7 @@ function App() {
   }
 
   const handleNewUserMessageWithStream = async (newMessage: string) => {
+    scrollHandler();
     const time = new Date().getTime();
     console.log(`time: ${time}`)
     console.log(`New message incoming! ${newMessage}`);
@@ -95,6 +120,7 @@ function App() {
     gResponseId += 1;
 
     try {
+      setTimeout(() => {scrollWidget(10000)}, 100);
       await postQuestion(newMessage, resId);
     } catch (error) {
       addResponseMessage(`エラーが発生しました。接続元IPアドレスが正しいか確認してください。`)
